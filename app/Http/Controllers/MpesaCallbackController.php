@@ -53,8 +53,6 @@ class MpesaCallbackController extends Controller
             }
 
             $mpesaLog->transaction_id = $transactionId;
-            $mpesaLog->amount = $amount;
-            $mpesaLog->phone_number = $phoneNumber;
             $mpesaLog->save();
 
             // Mark Invitee as accepted
@@ -72,11 +70,12 @@ class MpesaCallbackController extends Controller
                 'status'     => 'Active',
             ]);
 
-            // Send ticket SMS with PDF link
-            $pdfUrl = route('ticket.download', ['ticket' => $ticket->id]); // You must create this route
-            $smsMessage = "Hi {$invitee->name}, your BPM Skyline Studio ticket #{$ticket->number} is confirmed. Download: {$pdfUrl}";
+             $link = route('ticket.pdf', ['number' => $ticket->number]);
+        $msg  = "Hi {$invitee->name}, your BPM ticket is ready.\n"
+              . "Ticket #: {$ticket->number}\n"
+              . "Download PDF: {$link}";
 
-            SendSmsJob::dispatch($invitee->phone, $smsMessage);
+        SendSmsJob::dispatch($invitee->phone, $msg)->onQueue('sms');
         } else {
             // Failed payment
             $mpesaLog->save();
