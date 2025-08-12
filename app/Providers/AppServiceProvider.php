@@ -3,8 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Models\Invitee;
-use App\Observers\InviteeObserver;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Invitee::observe(InviteeObserver::class);
+
     }
 }
